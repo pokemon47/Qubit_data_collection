@@ -1,0 +1,110 @@
+import requests
+import json
+from dotenv import load_dotenv
+import os
+from datetime import datetime, timedelta
+
+
+# Load environment variables from .env file, load the keys after.
+load_dotenv()
+alpha_vantage_key = os.getenv("ALPHAVANTAGE_KEY")
+news_api_key = os.getenv("NEWSAPI_KEY")
+
+
+def get_news_data_av(tickers=None, time_from=None, time_to=None, sort='LATEST', limit=10):
+    base_url = 'https://www.alphavantage.co/query'
+
+    params = {
+        'function': 'NEWS_SENTIMENT',
+        'tickers': tickers,
+        'apikey': alpha_vantage_key,
+        'sort': sort,
+        'limit': 50
+    }
+
+
+    if time_from and time_to:
+        params['time_from'] = time_from
+        params['time_to'] = time_to
+    else:
+        params['time_from'] = (datetime.now() - timedelta(days=1)).strftime('%Y%m%dT%H%M')
+        params['time_to'] = datetime.now().strftime('%Y%m%dT%H%M')
+
+
+
+    response = requests.get(base_url, params=params)
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return f"Error: {response.status_code}, {response.text}"
+
+def get_top_gainers_losers_av():
+    base_url = 'https://www.alphavantage.co/query'
+
+    params = {
+        'function': 'TOP_GAINERS_LOSERS',
+        'apikey': alpha_vantage_key, 
+    }
+
+    response = requests.get(base_url, params=params)
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return f"Error: {response.status_code}, {response.text}"
+
+
+
+# news data BELOW
+# tickers = "TSLA"
+# news_data = get_news_data(tickers=tickers)
+# news_pretty_response = json.dumps(news_data, indent=4)
+# print(news_pretty_response)
+
+
+# top
+# top_gainers_losers_data = get_top_gainers_losers()
+# pretty_response = json.dumps(top_gainers_losers_data, indent=4)
+# print(pretty_response)
+
+############################################################################################################################################################
+############################################################################################################################################################
+############################################################################################################################################################
+
+
+def get_news_data_n(name, from_date=None, to_date=None, sort_by="popularity", language="en"):
+    # Base URL for the News API endpoint
+    base_url = "https://newsapi.org/v2/everything"
+    keywords_cond= "(scandal OR lawsuit OR legal OR quarterly OR buyback OR merger OR losses OR performance OR disruption OR innovation OR investigation OR profits OR market OR regulatory OR trade OR economic OR layoffs OR funding OR regulation OR investment OR failed OR shareholder OR inflation OR earnings OR battle OR corporate OR ceo OR capital OR price OR outlook OR acquisition OR report OR scandal OR IPO OR fraud OR concerns OR profit OR failure OR debt OR announcement OR positive)"
+    # Prepare parameters for the API request
+    params = {
+        'apiKey': news_api_key,  # Your API key
+        'q': f"{name} AND {keywords_cond}",  # The search query (e.g., "apple")
+        # 'sources': ['cnn', 'reuters', 'bloomberg'],
+        # 'domains': ['nytimes.com', 'businessinsider.com', 'wsj.com'],
+        'language': language,  # Language for the articles (e.g., 'en' for English)
+        'sortBy': sort_by,  # Sort articles by 'relevancy', 'popularity', or 'publishedAt'
+    }
+
+    # Optional parameters: 'from' and 'to' for date range
+    if from_date and to_date:
+        params['from'] = from_date
+        params['to'] = to_date
+    else:
+        # Default to 30 days ago if not provided
+        params['from'] = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
+        params['to'] = datetime.now().strftime('%Y-%m-%d')
+
+    # Make the GET request
+    response = requests.get(base_url, params=params)
+    
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        return response.json()  # Return the JSON response with news data
+    else:
+        return f"Error: {response.status_code}, {response.text}"
+
+newsapi_data = get_news_data_n(name="apple")
+pretty_response = json.dumps(newsapi_data, indent=4)
+print(pretty_response)
