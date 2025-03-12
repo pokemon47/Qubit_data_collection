@@ -6,11 +6,11 @@ from dotenv import load_dotenv
 # Load MongoDB connection URI
 
 load_dotenv()  # Load .env variables
-mongo_uri = os.getenv("MONGO_URI")  # This will have to be the URI from the actual DB
+mongo_uri = os.getenv("MONGO_URI")
 
 try:
     client = MongoClient(mongo_uri)  # 5 sec timeout
-    db = client["quant_data"]  # Replace with your actual DB name
+    db = client["quant_data"]
     collection = db["news_articles"]
 
     # Check connection
