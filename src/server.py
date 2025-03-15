@@ -1,10 +1,14 @@
 # app.py
 
 from flask import Flask, request, jsonify
-from attempt import get_news_data_av, get_top_gainers_losers_av, get_news_data_n
+from src.attempt import get_news_data_av, get_top_gainers_losers_av, get_news_data_n
 
 # Initialize Flask app
 app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Hello, Flask is working!"
 
 # Route to get news sentiment data from Alpha Vantage
 @app.route('/news_alpha_vantage', methods=['GET'])
