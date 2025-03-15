@@ -4,8 +4,8 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 
 # Load MongoDB connection URI
-
-load_dotenv()  # Load .env variables
+# Load .env variables
+load_dotenv()
 mongo_uri = os.getenv("MONGO_URI")
 
 try:

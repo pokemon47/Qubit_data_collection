@@ -1,10 +1,16 @@
 # app.py
 
+from datetime import datetime
 from flask import Flask, request, jsonify
+import re
 from attempt import get_news_data_av, get_top_gainers_losers_av, get_news_data_n
 
 # Initialize Flask app
 app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Hello, Flask is working!"
 
 # Route to get news sentiment data from Alpha Vantage
 @app.route('/news_alpha_vantage', methods=['GET'])
@@ -30,13 +36,18 @@ def newsapi():
     name = request.args.get('name')
     from_date = request.args.get('from_date')
     to_date = request.args.get('to_date')
-    # TODO need to add a check for the args above
-    # 1) name has to be just a name, shouldn't allow for +, -, or any conditonal words such as AND, OR, NOT
-    # 2) The date values must be of ISO 8601 format (e.g. 2025-03-04 or 2025-03-04T07:11:59). However, the date values are optional. Either both are given or neither are given.
-
+    print(f"DEBUG: name: {name} from: {from_date} to: {to_date}")
+    if not name or not re.match(r'^[a-zA-Z\s]+$', name) or re.search(r'\b(AND|OR|NOT)\b', name, re.IGNORECASE):
+        return jsonify({"error": "Invalid 'name' given"}), 400
+    if from_date and not to_date or to_date and not from_date:
+        return jsonify({"error": "Please provide both to and from dates or none"}), 400
+    if from_date and to_date:
+        try:
+            datetime.fromisoformat(from_date)
+            datetime.fromisoformat(to_date)
+        except ValueError:
+            return jsonify({"error": "Date values must be of ISO 8601 format (e.g. 2025-03-04 or 2025-03-04T07:11:59)"}), 400
     data = get_news_data_n(name=name, from_date=from_date, to_date=to_date)
-
-
     return jsonify(data)
 
 
