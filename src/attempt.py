@@ -5,10 +5,10 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
-# alpha_vantage_key = os.getenv("ALPHAVANTAGE_K EY")
-alpha_vantage_key = 'XXO345Z81O5RS7YR'
-# news_api_key = os.getenv("NEWSAPI_KEY")
+alpha_vantage_key = os.getenv("ALPHAVANTAGE_K EY")
+news_api_key = os.getenv("NEWSAPI_KEY")
 news_api_key = '4141137ea3eb462485cfd4b63e904bad'
+alpha_vantage_key = 'XXO345Z81O5RS7YR'
 
 # Function to get news data from Alpha Vantage
 def get_news_data_av(tickers=None, time_from=None, time_to=None, sort='LATEST', limit=10):
@@ -83,6 +83,15 @@ def get_news_data_n(name, from_date=None, to_date=None, sort_by="popularity", la
     else:
         return f"Error: {response.status_code}, {response.text}"
 
+def tickers_fetch(name):
+    url = f'https://stock-symbol-lookup-api.onrender.com/{name}'
+    
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return f"Error: {response.status_code}, {response.text}"
+    
 def formattingADAGE(data, time_now, source_name):
     adage_data = {
         "data_source": str,

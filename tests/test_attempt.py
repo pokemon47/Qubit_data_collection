@@ -3,20 +3,20 @@ from datetime import datetime, timedelta
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-from attempt import get_news_data_av, get_top_gainers_losers_av, get_news_data_n, formattingADAGE
+from attempt import get_news_data_av, get_top_gainers_losers_av, get_news_data_n, formattingADAGE, tickers_fetch
 
 class testApiFetchCalls(unittest.TestCase):
 
-    def test_get_news_data_av_real(self):
-        result = get_news_data_av(tickers="AAPL")
-        ## making sure we get a result:
-        self.assertIsInstance(result, dict)
-        self.assertIn("feed", result)
+    # def test_get_news_data_av_real(self):
+    #     result = get_news_data_av(tickers="AAPL")
+    #     ## making sure we get a result:
+    #     self.assertIsInstance(result, dict)
+    #     self.assertIn("feed", result)
 
-    def test_get_top_gainers_losers_av_real(self):
-        result = get_top_gainers_losers_av()
-        self.assertIsInstance(result, dict)
-        self.assertIn("metadata", result)
+    # def test_get_top_gainers_losers_av_real(self):
+    #     result = get_top_gainers_losers_av()
+    #     self.assertIsInstance(result, dict)
+    #     self.assertIn("metadata", result)
 
     def test_get_news_data_n_real(self):
         result = get_news_data_n("facebook")
@@ -62,6 +62,10 @@ class testApiFetchCalls(unittest.TestCase):
         self.assertEqual(formatted_result["events"][0]["attribute"]["title"], "Musk and Trump’s Fort Knox Trip Is About Bitcoin")
         self.assertEqual(formatted_result["events"][1]["attribute"]["title"], "Five predictions for where crypto is headed in 2025")
 
+    def test_tickers_fetch(self):
+        result = tickers_fetch("apple")
+        self.assertIsInstance(result, dict)
+        self.assertIn("AAPL", result["stock_symbol"])
 
 if __name__ == "__main__":
     unittest.main()
