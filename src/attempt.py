@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
-alpha_vantage_key = os.getenv("ALPHAVANTAGE_K EY")
+# alpha_vantage_key = os.getenv("ALPHAVANTAGE_K EY")
+alpha_vantage_key = 'XXO345Z81O5RS7YR'
 # news_api_key = os.getenv("NEWSAPI_KEY")
 news_api_key = '4141137ea3eb462485cfd4b63e904bad'
 
@@ -72,12 +73,13 @@ def get_news_data_n(name, from_date=None, to_date=None, sort_by="popularity", la
         # Default to 7 days ago if not provided
         params['from'] = (time_now - timedelta(days=7)).strftime('%Y-%m-%d')
         params['to'] = time_now.strftime('%Y-%m-%d')
-
+        
     # Make the GET request
     response = requests.get(base_url, params=params)
-    
+
     if response.status_code == 200:
-        return formattingADAGE(response.json(), time_now.strftime("%Y-%m-%d %H:%M:%S"), "news_api_org")
+        formatted_data = formattingADAGE(response.json(), time_now.strftime("%Y-%m-%d %H:%M:%S"), "news_api_org")
+        return formatted_data
     else:
         return f"Error: {response.status_code}, {response.text}"
 
@@ -111,12 +113,14 @@ def formattingADAGE(data, time_now, source_name):
                     "publisher": articles.get("source", {}).get("name", "unknown"),
                     "title": articles.get("title", "unknown"),
                     "author": articles.get("author", "unknown"),
-                    "description": articles.get("description", "unknown")
+                    "description": articles.get("description", "unknown"),
+                    "url": articles.get("url", "none")
                 }
             }
             adage_data["events"].append(event_data)
+    return adage_data
 
-# TODOS
-# 1) Add a function that formats the data to ADAGE 3.0 format
-# 2) Add a function that writes to a MongoDB, one that can be executed on a seperate thread
-# 3) Make a job scheduler fucntion, a job that is to be executed on a seperate thread once a day. The job is to make N number of consecutive requests with every K minutes. - not certainly required, could change based on learning more about AWS lambda
+# Make a job scheduler fucntion,
+# a job that is to be executed on a seperate thread once a day.
+# The job is to make N number of consecutive requests with every K minutes.
+# - not certainly required, could change based on learning more about AWS lambda
