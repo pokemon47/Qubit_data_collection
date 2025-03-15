@@ -2,6 +2,7 @@
 
 from datetime import datetime
 from flask import Flask, request, jsonify
+from mangum import Mangum
 import re
 from attempt import get_news_data_av, get_top_gainers_losers_av, get_news_data_n
 
@@ -50,7 +51,5 @@ def newsapi():
     data = get_news_data_n(name=name, from_date=from_date, to_date=to_date)
     return jsonify(data)
 
-
-# Run the Flask app
-if __name__ == '__main__':
-    app.run(debug=True)
+# Create a handler for AWS Lambda
+lambda_handler = Mangum(app)
