@@ -112,7 +112,7 @@ def tickers_fetch(name):
 
 # Function which converts data from the APIs into the format which is stored
 # in the database, and in the events[] list of the ADAGE 3.0 format    
-def createArticleList(data):
+def create_article_list(data):
     article_list = []
 
     for articles in data.get("articles", []):
@@ -156,14 +156,14 @@ def formattingADAGE(data, time_now, source_name):
         adage_data["dataset_id"] = "1"
         adage_data["time_object"]["timestamp"] = time_now
         
-        article_list = copy.deepcopy(createArticleList(data))
+        article_list = copy.deepcopy(create_article_list(data))
 
         adage_data["events"] = article_list
     return adage_data
 
 # Function which writes collected data to the database
-def writeToDatabase(data, source_name):
-    article_list = copy.deepcopy(createArticleList(data))
+def write_to_database(data, source_name):
+    article_list = copy.deepcopy(create_article_list(data))
 
     # A separate collection is required for each source, since we must reconstruct
     # the ADAGE (including the data_source field) when retreiving data
