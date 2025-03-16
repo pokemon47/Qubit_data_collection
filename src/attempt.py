@@ -112,7 +112,7 @@ def formattingADAGE(data, time_now, source_name):
         for articles in data.get("articles", []):
             event_data = {
                 "time_object": {
-                    "timestamp": articles.get("publishedAt", "unknown"),
+                    "timestamp": datetime.fromisoformat(articles.get("publishedAt", "unknown")),
                     "duration": None,
                     "duration_unit": None,
                     "timezone": "UTC"
@@ -121,6 +121,7 @@ def formattingADAGE(data, time_now, source_name):
                 "attribute": {
                     "publisher": articles.get("source", {}).get("name", "unknown"),
                     "title": articles.get("title", "unknown"),
+                    # "tickers": (to be implemented later)
                     "author": articles.get("author", "unknown"),
                     "description": articles.get("description", "unknown"),
                     "url": articles.get("url", "none")
