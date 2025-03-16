@@ -1,6 +1,7 @@
 import os
 import requests
 from datetime import datetime, timedelta
+from pymongo import MongoClient
 from dotenv import load_dotenv
 import copy
 
@@ -10,6 +11,21 @@ alpha_vantage_key = os.getenv("ALPHAVANTAGE_K EY")
 news_api_key = os.getenv("NEWSAPI_KEY")
 # news_api_key = '4141137ea3eb462485cfd4b63e904bad'
 # alpha_vantage_key = 'XXO345Z81O5RS7YR'
+
+# Load MongoDB connection URI
+# Load .env variables
+load_dotenv()
+mongo_uri = os.getenv("MONGO_URI")
+
+try:
+    client = MongoClient(mongo_uri)  # 5 sec timeout
+    db = client["quant_data"]
+
+    # Check connection
+    print(client.server_info())  # Should print server details
+
+except Exception as e:
+    print("MongoDB connection error:", e)
 
 # Function to get news data from Alpha Vantage
 def get_news_data_av(tickers=None, time_from=None, time_to=None, sort='LATEST', limit=10):
@@ -84,6 +100,7 @@ def get_news_data_n(name, from_date=None, to_date=None, sort_by="popularity", la
     else:
         return f"Error: {response.status_code}, {response.text}"
 
+# Function to map company names to tickers
 def tickers_fetch(name):
     url = f'https://stock-symbol-lookup-api.onrender.com/{name}'
     
@@ -92,7 +109,9 @@ def tickers_fetch(name):
         return response.json()
     else:
         return f"Error: {response.status_code}, {response.text}"
-    
+
+# Function which converts data from the APIs into the format which is stored
+# in the database, and in the events[] list of the ADAGE 3.0 format    
 def createArticleList(data):
     article_list = []
 
@@ -118,7 +137,8 @@ def createArticleList(data):
         article_list.append(article_data)
 
     return article_list
-    
+
+# Function which converts data from the APIs to ADAGE 3.0 format    
 def formattingADAGE(data, time_now, source_name):
     adage_data = {
         "data_source": str,
@@ -140,6 +160,22 @@ def formattingADAGE(data, time_now, source_name):
 
         adage_data["events"] = article_list
     return adage_data
+
+# Function which writes collected data to the database
+def writeToDatabase(data, source_name):
+    article_list = copy.deepcopy(createArticleList(data))
+
+    # A separate collection is required for each source, since we must reconstruct
+    # the ADAGE (including the data_source field) when retreiving data
+    if (source_name == "news_api_org"):
+        collection = db["news_api"]
+    else:
+        # news_articles is the default collection to insert into
+        collection = db["news_articles"]
+
+    insert_result = collection.insert_many(article_list)
+    print(f"Inserted {len(insert_result.inserted_ids)} documents.")
+
 
 # Make a job scheduler fucntion,
 # a job that is to be executed on a seperate thread once a day.
