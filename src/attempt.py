@@ -2,6 +2,7 @@ import os
 import requests
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+import copy
 
 # Load environment variables
 load_dotenv()
@@ -92,6 +93,32 @@ def tickers_fetch(name):
     else:
         return f"Error: {response.status_code}, {response.text}"
     
+def createArticleList(data):
+    article_list = []
+
+    for articles in data.get("articles", []):
+        article_data = {
+            "time_object": {
+                "timestamp": datetime.fromisoformat(articles.get("publishedAt", "unknown")),
+                "duration": None,
+                "duration_unit": None,
+                "timezone": "UTC"
+            },
+            "event_type": "News article",
+            "attribute": {
+                "publisher": articles.get("source", {}).get("name", "unknown"),
+                "title": articles.get("title", "unknown"),
+                # "tickers": (to be implemented later)
+                "author": articles.get("author", "unknown"),
+                "description": articles.get("description", "unknown"),
+                "url": articles.get("url", "none")
+            }
+        }
+        
+        article_list.append(article_data)
+
+    return article_list
+    
 def formattingADAGE(data, time_now, source_name):
     adage_data = {
         "data_source": str,
@@ -109,25 +136,9 @@ def formattingADAGE(data, time_now, source_name):
         adage_data["dataset_id"] = "1"
         adage_data["time_object"]["timestamp"] = time_now
         
-        for articles in data.get("articles", []):
-            event_data = {
-                "time_object": {
-                    "timestamp": datetime.fromisoformat(articles.get("publishedAt", "unknown")),
-                    "duration": None,
-                    "duration_unit": None,
-                    "timezone": "UTC"
-                },
-                "event_type": "News article",
-                "attribute": {
-                    "publisher": articles.get("source", {}).get("name", "unknown"),
-                    "title": articles.get("title", "unknown"),
-                    # "tickers": (to be implemented later)
-                    "author": articles.get("author", "unknown"),
-                    "description": articles.get("description", "unknown"),
-                    "url": articles.get("url", "none")
-                }
-            }
-            adage_data["events"].append(event_data)
+        article_list = copy.deepcopy(createArticleList(data))
+
+        adage_data["events"] = article_list
     return adage_data
 
 # Make a job scheduler fucntion,
