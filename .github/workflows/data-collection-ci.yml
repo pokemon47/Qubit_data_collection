@@ -36,4 +36,4 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with unittest and check coverage
       run: |
-        python3 -m coverage run -m unittest ./tests/test_attempt.py
+        python3 -m coverage run -m unittest ./tests/test_*.py
