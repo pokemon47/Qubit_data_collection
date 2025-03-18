@@ -9,7 +9,7 @@ load_dotenv()
 mongo_uri = os.getenv("MONGO_URI")
 
 try:
-    client = MongoClient(mongo_uri)  # 5 sec timeout
+    client: MongoClient = MongoClient(mongo_uri)  # 5 sec timeout
     db = client["quant_data"]
     collection = db["news_articles"]
 
