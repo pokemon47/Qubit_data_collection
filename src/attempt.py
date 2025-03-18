@@ -11,6 +11,8 @@ news_api_key = os.getenv("NEWSAPI_KEY")
 # alpha_vantage_key = 'XXO345Z81O5RS7YR'
 
 # Function to get news data from Alpha Vantage
+
+
 def get_news_data_av(tickers=None, time_from=None, time_to=None, sort='LATEST', limit=10):
     base_url = 'https://www.alphavantage.co/query'
 
@@ -26,7 +28,8 @@ def get_news_data_av(tickers=None, time_from=None, time_to=None, sort='LATEST', 
         params['time_from'] = time_from
         params['time_to'] = time_to
     else:
-        params['time_from'] = (datetime.now() - timedelta(days=1)).strftime('%Y%m%dT%H%M')
+        params['time_from'] = (
+            datetime.now() - timedelta(days=1)).strftime('%Y%m%dT%H%M')
         params['time_to'] = datetime.now().strftime('%Y%m%dT%H%M')
 
     response = requests.get(base_url, params=params)
@@ -37,6 +40,8 @@ def get_news_data_av(tickers=None, time_from=None, time_to=None, sort='LATEST', 
         return f"Error: {response.status_code}, {response.text}"
 
 # Function to get top gainers and losers from Alpha Vantage
+
+
 def get_top_gainers_losers_av():
     base_url = 'https://www.alphavantage.co/query'
 
@@ -53,19 +58,22 @@ def get_top_gainers_losers_av():
         return f"Error: {response.status_code}, {response.text}"
 
 # Function to get news data from News API
+
+
 def get_news_data_n(name, from_date=None, to_date=None, sort_by="popularity", language="en"):
     base_url = "https://newsapi.org/v2/everything"
-    keywords_cond= "(scandal OR lawsuit OR legal OR quarterly OR buyback OR merger OR losses OR performance OR disruption OR innovation OR investigation OR profits OR market OR regulatory OR trade OR economic OR layoffs OR funding OR regulation OR investment OR failed OR shareholder OR inflation OR earnings OR battle OR corporate OR ceo OR capital OR price OR outlook OR acquisition OR report OR scandal OR IPO OR fraud OR concerns OR profit OR failure OR debt OR announcement OR positive)"
+    keywords_cond = "(scandal OR lawsuit OR legal OR quarterly OR buyback OR merger OR losses OR performance OR disruption OR innovation OR investigation OR profits OR market OR regulatory OR trade OR economic OR layoffs OR funding OR regulation OR investment OR failed OR shareholder OR inflation OR earnings OR battle OR corporate OR ceo OR capital OR price OR outlook OR acquisition OR report OR scandal OR IPO OR fraud OR concerns OR profit OR failure OR debt OR announcement OR positive)"
 
     params = {
         'apiKey': news_api_key,
         'q': f"{name} AND {keywords_cond}",  # The search query (e.g., "apple")
-        'language': language,  # Language for the articles (e.g., 'en' for English)
+        # Language for the articles (e.g., 'en' for English)
+        'language': language,
         'sortBy': sort_by,  # Sort articles by 'relevancy', 'popularity', or 'publishedAt'
     }
 
     time_now = datetime.now()
-    
+
     if from_date and to_date:
         params['from'] = from_date
         params['to'] = to_date
@@ -73,25 +81,28 @@ def get_news_data_n(name, from_date=None, to_date=None, sort_by="popularity", la
         # Default to 7 days ago if not provided
         params['from'] = (time_now - timedelta(days=7)).strftime('%Y-%m-%d')
         params['to'] = time_now.strftime('%Y-%m-%d')
-        
+
     # Make the GET request
     response = requests.get(base_url, params=params)
 
     if response.status_code == 200:
-        formatted_data = formattingADAGE(response.json(), time_now.strftime("%Y-%m-%d %H:%M:%S"), "news_api_org")
+        formatted_data = formattingADAGE(
+            response.json(), time_now.strftime("%Y-%m-%d %H:%M:%S"), "news_api_org")
         return formatted_data
     else:
         return f"Error: {response.status_code}, {response.text}"
 
+
 def tickers_fetch(name):
     url = f'https://stock-symbol-lookup-api.onrender.com/{name}'
-    
+
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
     else:
         return f"Error: {response.status_code}, {response.text}"
-    
+
+
 def formattingADAGE(data, time_now, source_name):
     adage_data = {
         "data_source": str,
@@ -108,7 +119,7 @@ def formattingADAGE(data, time_now, source_name):
         adage_data["dataset_type"] = "News data"
         adage_data["dataset_id"] = "1"
         adage_data["time_object"]["timestamp"] = time_now
-        
+
         for articles in data.get("articles", []):
             event_data = {
                 "time_object": {
