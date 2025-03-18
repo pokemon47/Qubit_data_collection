@@ -1,10 +1,10 @@
-from attempt import get_news_data_av, get_top_gainers_losers_av, get_news_data_n, formattingADAGE, tickers_fetch
 import unittest
 from datetime import datetime, timedelta
 import os
 import sys
 sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), '../src')))
+from attempt import get_news_data_av, get_top_gainers_losers_av, get_news_data_n, formattingADAGE, tickers_fetch
 
 
 class testApiFetchCalls(unittest.TestCase):
