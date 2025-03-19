@@ -7,10 +7,8 @@ import copy
 
 # Load environment variables
 load_dotenv()
-alpha_vantage_key = os.getenv("ALPHAVANTAGE_K EY")
-news_api_key = os.getenv("NEWSAPI_KEY")
-# news_api_key = '4141137ea3eb462485cfd4b63e904bad'
-# alpha_vantage_key = 'XXO345Z81O5RS7YR'
+alpha_vantage_key = os.getenv("ALPHA_API_KEY")
+news_api_key = os.getenv("NEWS_API_KEY")
 
 # Load MongoDB connection URI
 # Load .env variables
