@@ -18,7 +18,7 @@ load_dotenv()
 mongo_uri = os.getenv("MONGO_URI")
 
 try:
-    client = MongoClient(mongo_uri)  # 5 sec timeout
+    client: MongoClient = MongoClient(mongo_uri)  # 5 sec timeout
     db = client["quant_data"]
 
     # Check connection
@@ -103,7 +103,8 @@ def get_news_data_n(name, from_date=None, to_date=None, sort_by="popularity", la
     response = requests.get(base_url, params=params)
 
     if response.status_code == 200:
-        formatted_data = formattingADAGE(response.json(), time_now.strftime("%Y-%m-%d %H:%M:%S"), "news_api_org")
+        formatted_data = formattingADAGE(
+            response.json(), time_now.strftime("%Y-%m-%d %H:%M:%S"), "news_api_org")
         # Do not want to be writing data to the database during testing
         if os.getenv("TEST_MODE") == "False":
             write_to_database(response.json(), "news_api_org")
