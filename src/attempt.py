@@ -1,3 +1,5 @@
+# attempt.py
+
 import os
 import requests
 from datetime import datetime, timedelta
@@ -7,10 +9,8 @@ import copy
 
 # Load environment variables
 load_dotenv()
-alpha_vantage_key = os.getenv("ALPHAVANTAGE_K EY")
-news_api_key = os.getenv("NEWSAPI_KEY")
-# news_api_key = '4141137ea3eb462485cfd4b63e904bad'
-# alpha_vantage_key = 'XXO345Z81O5RS7YR'
+alpha_vantage_key = os.getenv("ALPHA_API_KEY")
+news_api_key = os.getenv("NEWS_API_KEY")
 
 # Load MongoDB connection URI
 # Load .env variables
@@ -103,8 +103,12 @@ def get_news_data_n(name, from_date=None, to_date=None, sort_by="popularity", la
     response = requests.get(base_url, params=params)
 
     if response.status_code == 200:
-        formatted_data = formattingADAGE(
-            response.json(), time_now.strftime("%Y-%m-%d %H:%M:%S"), "news_api_org")
+        formatted_data = formattingADAGE(response.json(), time_now.strftime("%Y-%m-%d %H:%M:%S"), "news_api_org")
+        # Do not want to be writing data to the database during testing
+        if os.getenv("TEST_MODE") == "False":
+            write_to_database(response.json(), "news_api_org")
+        else:
+            print("TESTING IN PROGRESS: TEST_MODE is True, not writing to database")
         return formatted_data
     else:
         return f"Error: {response.status_code}, {response.text}"
@@ -131,9 +135,13 @@ def create_article_list(data):
     article_list = []
 
     for articles in data.get("articles", []):
+        # timestamp is in ISO 8601 format
+        timestamp = articles.get("publishedAt", "unknown")
+        if timestamp.endswith("Z"):
+            timestamp = timestamp.replace("Z", "+00:00")
         article_data = {
             "time_object": {
-                "timestamp": datetime.fromisoformat(articles.get("publishedAt", "unknown")),
+                "timestamp": datetime.fromisoformat(timestamp),
                 "duration": None,
                 "duration_unit": None,
                 "timezone": "UTC"
