@@ -96,7 +96,11 @@ def get_news_data_n(name, from_date=None, to_date=None, sort_by="popularity", la
 
     if response.status_code == 200:
         formatted_data = formattingADAGE(response.json(), time_now.strftime("%Y-%m-%d %H:%M:%S"), "news_api_org")
-        write_to_database(response.json(), "news_api_org")
+        # Do not want to be writing data to the database during testing
+        if os.getenv("TEST_MODE") == "False":
+            write_to_database(response.json(), "news_api_org")
+        else:
+            print("TESTING IN PROGRESS: TEST_MODE is True, not writing to database")
         return formatted_data
     else:
         return f"Error: {response.status_code}, {response.text}"
