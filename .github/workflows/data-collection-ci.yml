@@ -35,6 +35,9 @@ jobs:
         flake8 src/ --count --max-complexity=10 --statistics --ignore=E501
         # flake8 tests/ --count --max-complexity=10 --statistics --ignore=E501
     - name: Test with unittest and record check coverage
+      env:
+        MONGO_URI: ${{ secrets.MONGO_URI }}
+        NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
       run: |
         python3 -m coverage run -m unittest ./tests/test_*.py
         coverage report -m
