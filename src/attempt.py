@@ -148,12 +148,12 @@ def create_article_list(data):
                 "url": articles.get("url", "none")
             }
         }
-        
+
         article_list.append(article_data)
 
     return article_list
 
-# Function which converts data from the APIs to ADAGE 3.0 format    
+# Function which converts data from the APIs to ADAGE 3.0 format
 
 
 def formattingADAGE(data, time_now, source_name):
@@ -172,13 +172,15 @@ def formattingADAGE(data, time_now, source_name):
         adage_data["dataset_type"] = "News data"
         adage_data["dataset_id"] = "1"
         adage_data["time_object"]["timestamp"] = time_now
-        
+
         article_list = copy.deepcopy(create_article_list(data))
         adage_data["events"] = article_list
 
     return adage_data
 
 # Function which writes collected data to the database
+
+
 def write_to_database(data, source_name):
     article_list = copy.deepcopy(create_article_list(data))
 
