@@ -1,4 +1,4 @@
-# app.py
+# server.py
 
 from datetime import datetime
 from flask import Flask, request, jsonify
@@ -8,11 +8,14 @@ from attempt import get_news_data_av, get_top_gainers_losers_av, get_news_data_n
 # Initialize Flask app
 app = Flask(__name__)
 
+
 @app.route("/")
 def home():
     return "Hello, Flask is working!"
 
 # Route to get news sentiment data from Alpha Vantage
+
+
 @app.route('/news_alpha_vantage', methods=['GET'])
 def news_alpha_vantage():
     tickers = request.args.get('tickers')
@@ -21,16 +24,21 @@ def news_alpha_vantage():
     sort = request.args.get('sort', 'LATEST')
     limit = request.args.get('limit', 10)
 
-    data = get_news_data_av(tickers=tickers, time_from=time_from, time_to=time_to, sort=sort, limit=limit)
+    data = get_news_data_av(
+        tickers=tickers, time_from=time_from, time_to=time_to, sort=sort, limit=limit)
     return jsonify(data)
 
 # Route to get top gainers and losers from Alpha Vantage
+
+
 @app.route('/top_gainers_losers', methods=['GET'])
 def top_gainers_losers():
     data = get_top_gainers_losers_av()
     return jsonify(data)
 
 # Route to get news data from News API
+
+
 @app.route('/newsapi', methods=['GET'])
 def newsapi():
     name = request.args.get('name')
