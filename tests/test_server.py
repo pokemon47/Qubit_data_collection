@@ -10,13 +10,17 @@ class testQubitApis(unittest.TestCase):
     # classmethod -> runs before the tests start
     # starts the app basically:
     @classmethod
-    def set_up_class(cls):
+    def setUpClass(cls):
         cls.app = app.test_client()
 
     # before tests
     # basically beforeEach
-    def set_up(self):
+    def setUp(self):
         self.client = self.app
+        os.environ["TEST_MDOE"] = "True"
+
+    def tearDown(self):
+        os.environ.pop("TEST_MODE", None)
         
     def test_set_up(self):
         response = self.app.get("/")

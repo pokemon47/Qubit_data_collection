@@ -17,6 +17,11 @@ class testApiFetchCalls(unittest.TestCase):
     #     result = get_top_gainers_losers_av()
     #     self.assertIsInstance(result, dict)
     #     self.assertIn("metadata", result)
+    def setUp(self):
+        os.environ["TEST_MDOE"] = "True"
+
+    def tearDown(self):
+        os.environ.pop("TEST_MODE", None)  # Remove test mode after each test
 
     def test_get_news_data_n_real(self):
         result = get_news_data_n("facebook")
@@ -62,10 +67,11 @@ class testApiFetchCalls(unittest.TestCase):
         self.assertEqual(formatted_result["events"][0]["attribute"]["title"], "Musk and Trump’s Fort Knox Trip Is About Bitcoin")
         self.assertEqual(formatted_result["events"][1]["attribute"]["title"], "Five predictions for where crypto is headed in 2025")
 
-    def test_tickers_fetch(self):
+    # The following API fetch call is too slow to be tested in the CI/CD pipeline
+    """ def test_tickers_fetch(self):
         result = tickers_fetch("apple")
         self.assertIsInstance(result, dict)
-        self.assertIn("AAPL", result["stock_symbol"])
+        self.assertIn("AAPL", result["stock_symbol"]) """
 
 if __name__ == "__main__":
     unittest.main()
