@@ -1,3 +1,5 @@
+# attempt.py
+
 import os
 import requests
 from datetime import datetime, timedelta
@@ -94,6 +96,7 @@ def get_news_data_n(name, from_date=None, to_date=None, sort_by="popularity", la
 
     if response.status_code == 200:
         formatted_data = formattingADAGE(response.json(), time_now.strftime("%Y-%m-%d %H:%M:%S"), "news_api_org")
+        write_to_database(response.json(), "news_api_org")
         return formatted_data
     else:
         return f"Error: {response.status_code}, {response.text}"
@@ -114,9 +117,13 @@ def create_article_list(data):
     article_list = []
 
     for articles in data.get("articles", []):
+        # timestamp is in ISO 8601 format
+        timestamp = articles.get("publishedAt", "unknown")
+        if timestamp.endswith("Z"):
+            timestamp = timestamp.replace("Z", "+00:00")
         article_data = {
             "time_object": {
-                "timestamp": datetime.fromisoformat(articles.get("publishedAt", "unknown")),
+                "timestamp": datetime.fromisoformat(timestamp),
                 "duration": None,
                 "duration_unit": None,
                 "timezone": "UTC"
