@@ -1,4 +1,4 @@
-from server import app
+# from server import app
 import unittest
 from datetime import datetime
 import sys
