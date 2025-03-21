@@ -3,9 +3,13 @@
 from datetime import datetime
 from flask import Flask, request, jsonify
 import re
-from attempt import get_news_data_av, get_top_gainers_losers_av, get_news_data_n
+import os
+from functions import get_news_data_av, get_top_gainers_losers_av, get_news_data_n
 
 # Initialize Flask app
+SERVER_ADDRESS = os.getenv("FLASK_RUN_HOST", "127.0.0.1")
+PORT = int(os.getenv("FLASK_RUN_PORT", 5000))  # Default to 5000 if not set
+
 app = Flask(__name__)
 
 
@@ -61,4 +65,5 @@ def newsapi():
 
 # Run the Flask app
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host=SERVER_ADDRESS, port=PORT, debug=False)
+
