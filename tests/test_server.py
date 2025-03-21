@@ -20,7 +20,7 @@ class testQubitApis(unittest.TestCase):
     # basically beforeEach
     def setUp(self):
         self.client = self.app
-        os.environ["TEST_MDOE"] = "True"
+        os.environ["TEST_MODE"] = "True"
 
     def tearDown(self):
         os.environ.pop("TEST_MODE", None)
