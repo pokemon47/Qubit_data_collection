@@ -106,7 +106,7 @@ def get_news_data_n(name, from_date=None, to_date=None, sort_by="popularity", la
         formatted_data = formattingADAGE(
             response.json(), time_now.strftime("%Y-%m-%d %H:%M:%S"), "news_api_org")
         # Do not want to be writing data to the database during testing
-        if os.getenv("TEST_MODE") == "False":
+        if os.getenv("TEST_MODE", "false").lower() != "true":
             write_to_database(response.json(), "news_api_org")
         else:
             print("TESTING IN PROGRESS: TEST_MODE is True, not writing to database")
@@ -203,6 +203,29 @@ def write_to_database(data, source_name):
 
     insert_result = collection.insert_many(article_list)
     print(f"Inserted {len(insert_result.inserted_ids)} documents.")
+
+
+
+def add_new_index(name, from_date, to_date):
+    interval_collection = db["company_index"]
+    result = interval_collection.find_one({"name": name}, {"_id": 0, "intervals": 1})
+
+    query = {}
+
+    if result:
+        query["item"] = "name"
+        query["$set"] = {"time_intervals": [[from_date, to_date]]}
+
+        interval_collection.update_one(query)
+    else:
+        query = {
+            "name": name,
+            "time_intervals": [[from_date, to_date]],
+            "hits": 0,
+            "misses": 0
+        }
+
+        interval_collection.insert_one(query)
 
 
 # Make a job scheduler fucntion,

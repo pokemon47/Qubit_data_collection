@@ -20,7 +20,7 @@ class testApiFetchCalls(unittest.TestCase):
     #     self.assertIsInstance(result, dict)
     #     self.assertIn("metadata", result)
     def setUp(self):
-        os.environ["TEST_MDOE"] = "True"
+        os.environ["TEST_MODE"] = "True"
 
     def tearDown(self):
         os.environ.pop("TEST_MODE", None)  # Remove test mode after each test
