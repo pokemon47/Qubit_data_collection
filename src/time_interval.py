@@ -6,13 +6,13 @@ def print_intervals(intervals):
         print("No intervals stored.")
     else:
         print("Stored intervals:")
-        for start_date, end_date in intervals:
-            print(f"From {start_date} to {end_date}")
+        for interval in intervals:
+            print(f"From {interval[0]} to {interval[1]}")
 
 def add_interval(intervals, start_date, end_date):
     # Insert the new interval while keeping the list sorted
-    pos = bisect.bisect_right(intervals, (start_date, end_date))
-    intervals.insert(pos, (start_date, end_date))
+    pos = bisect.bisect_right(intervals, [start_date, end_date])
+    intervals.insert(pos, [start_date, end_date])
     
     # Merge any overlapping intervals
     merge_intervals(intervals)
@@ -36,6 +36,5 @@ def merge_intervals(intervals):
             merged.append(interval)
         else:
             newEndDate = max(date1End, date2End).strftime("%d-%m-%Y")
-            merged[-1] = (merged[-1][0], newEndDate)
+            merged[-1] = [merged[-1][0], newEndDate]
     intervals[:] = merged
-
