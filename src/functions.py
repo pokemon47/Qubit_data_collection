@@ -214,13 +214,21 @@ def add_new_index(name, from_date, to_date):
     result = interval_collection.find_one({"name": name}, {"_id": 0, "intervals": 1})
 
     query = {}
-
+    update = {} # NEW
     if result:
         intervals = result.get("intervals", [])
         add_interval(intervals, from_date, to_date)
-        query["item"] = "name"
-        query["$set"] = {"time_intervals": intervals}
-        interval_collection.update_one(query)
+
+        # 3 LINES BELOW ARE OLD
+        # query["item"] = "name"
+        # query["$set"] = {"time_intervals": intervals}
+        # interval_collection.update_one(query)
+
+        # 3 LINES BELOW ARE NEW
+        query["name"] = name
+        update["$set"] = {"time_intervals": intervals}
+        interval_collection.update_one(query, update)
+
     else:
         query = {
             "name": name,
