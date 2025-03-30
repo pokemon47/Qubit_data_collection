@@ -205,10 +205,10 @@ def write_to_database(data, source_name):
     print(f"Inserted {len(insert_result.inserted_ids)} documents.")
 
 
-
 def add_new_index(name, from_date, to_date):
     interval_collection = db["company_index"]
-    result = interval_collection.find_one({"name": name}, {"_id": 0, "intervals": 1})
+    result = interval_collection.find_one(
+        {"name": name}, {"_id": 0, "intervals": 1})
 
     query = {}
 
