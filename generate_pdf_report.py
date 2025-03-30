@@ -6,7 +6,7 @@ import datetime
 # Set constants and variables
 PDF_TITLE = "Qubit Data Collection: Testing report"
 TEST_FRAMEWORK = "unittest"
-current_time = datetime.datetime.now().ctime()
+current_time = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=11))).ctime()
 
 unit_tests_pass = True
 linting_pass = True
