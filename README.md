@@ -4,9 +4,3 @@ It then cleans and formats the data returned from the APIs mentioned.
 One the Data has been formated to the ADAGE 3.0 standards, it is to be stored in our database.
 
 ![Pipeline](https://github.com/pokemon47/Qubit_data_collection/actions/workflows/data-collection-ci.yml/badge.svg)
-
-<<<<<<< HEAD
-[![Data Collection Testing Report](https://img.shields.io/badge/Testing_Report-Download-blue)](https://github.com/pokemon47/Qubit_data_collection/actions/runs/${GITHUB_RUN_ID}/artifacts/data-collection-testing-report)
-=======
-[![Data Collection Testing Report](https://img.shields.io/badge/Artifact-Download-blue)](https://github.com/pokemon47/Qubit_data_collection/actions/runs/${{GITHUB_RUN_ID}}/artifacts/data-collection-testing-report)
->>>>>>> 2835d5244908b34074f376b84f0bdaea482ecab8
