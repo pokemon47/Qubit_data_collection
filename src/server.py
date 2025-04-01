@@ -66,4 +66,3 @@ def newsapi():
 # Run the Flask app
 if __name__ == '__main__':
     app.run(host=SERVER_ADDRESS, port=PORT, debug=False)
-

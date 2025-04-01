@@ -1,5 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 import bisect
+
 
 def print_intervals(intervals):
     if not intervals:
@@ -9,21 +10,24 @@ def print_intervals(intervals):
         for interval in intervals:
             print(f"From {interval[0]} to {interval[1]}")
 
+
 def add_interval(intervals, start_date, end_date):
     # Insert the new interval while keeping the list sorted
     pos = bisect.bisect_right(intervals, [start_date, end_date])
     intervals.insert(pos, [start_date, end_date])
-    
+
     # Merge any overlapping intervals
     merge_intervals(intervals)
+
 
 def are_dates_adjacent(date1, date2):
     # Convert the string dates to datetime objects
     date1 = datetime.strptime(date1, "%d-%m-%Y")
     date2 = datetime.strptime(date2, "%d-%m-%Y")
-    
+
     # Check if the difference between the two dates is exactly one day
     return abs((date2 - date1).days) == 1
+
 
 def merge_intervals(intervals):
     merged = []

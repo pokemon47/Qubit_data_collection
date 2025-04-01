@@ -107,10 +107,11 @@ def get_news_data_n(name, from_date=None, to_date=None, sort_by="popularity", la
         # Do not want to be writing data to the database during testing
         if os.getenv("TEST_MODE", "false").lower() != "true":
             write_to_database(response.json(), "news_api_org")
-            from_date_dmY = datetime.strptime(params['from'], "%Y-%m-%d").strftime("%d-%m-%Y")
-            to_date_dmY = datetime.strptime(params['to'], "%Y-%m-%d").strftime("%d-%m-%Y")
+            from_date_dmY = datetime.strptime(
+                params['from'], "%Y-%m-%d").strftime("%d-%m-%Y")
+            to_date_dmY = datetime.strptime(
+                params['to'], "%Y-%m-%d").strftime("%d-%m-%Y")
             add_new_index(name, from_date_dmY, to_date_dmY)
-
 
         else:
             print("TESTING IN PROGRESS: TEST_MODE is True, not writing to database")
@@ -211,10 +212,11 @@ def write_to_database(data, source_name):
 
 def add_new_index(name, from_date, to_date):
     interval_collection = db["company_index"]
-    result = interval_collection.find_one({"name": name}, {"_id": 0, "intervals": 1})
+    result = interval_collection.find_one(
+        {"name": name}, {"_id": 0, "intervals": 1})
 
     query = {}
-    update = {} # NEW
+    update = {}  # NEW
     if result:
         intervals = result.get("intervals", [])
         add_interval(intervals, from_date, to_date)
