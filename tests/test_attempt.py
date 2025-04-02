@@ -6,6 +6,8 @@ sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), '../src')))
 from functions import get_news_data_av, get_top_gainers_losers_av, get_news_data_n, formattingADAGE, tickers_fetch
 
+time_now = datetime.now()
+
 
 class testApiFetchCalls(unittest.TestCase):
 
@@ -29,6 +31,26 @@ class testApiFetchCalls(unittest.TestCase):
         result = get_news_data_n("facebook")
         self.assertIsInstance(result, dict)
         self.assertIn("events", result)
+
+    def test_get_news_data_n_set_dates(self):
+        from_date = datetime.fromisoformat("2025-03-04")
+        to_date = datetime.fromisoformat("2025-03-10")
+        result = get_news_data_n("facebook", from_date, to_date)
+        self.assertIsInstance(result, dict)
+        self.assertIn("events", result)
+        
+        dates_list = []
+
+        for article in result["articles"]:
+            dates_list.append(article["publishedAt"])
+
+        dates_list.sort()
+
+        for date in dates_list:
+            date = datetime.fromisoformat(date)
+
+        self.assertGreaterEqual(dates_list[0], from_date)
+        self.assertLessEqual(dates_list[-1], to_date)
 
     def test_formattingADAGE(self):
         sample_data = {
