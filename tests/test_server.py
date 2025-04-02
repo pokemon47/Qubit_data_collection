@@ -26,10 +26,10 @@ class testQubitApis(unittest.TestCase):
         os.environ.pop("TEST_MODE", None)
         
     def test_set_up(self):
-        response = self.app.get("/")
+        response = self.app.get("/status")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data.decode(
-            "utf-8"), "Hello, Flask is working!")
+        response_json = response.get_json()
+        self.assertEqual(response_json.get("status"), "Server is running")
 
     # def test_news_alpha_vantage_valid(self):
     #     response = self.app.get("/news_alpha_vantage?tickers=AAPL&limit=5")

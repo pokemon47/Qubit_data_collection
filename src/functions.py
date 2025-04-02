@@ -6,16 +6,15 @@ from datetime import datetime, timedelta
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import copy
+from time_interval import add_interval
+
 
 # Load environment variables
 load_dotenv()
 alpha_vantage_key = os.getenv("ALPHA_API_KEY")
 news_api_key = os.getenv("NEWS_API_KEY")
-
-# Load MongoDB connection URI
-# Load .env variables
-load_dotenv()
 mongo_uri = os.getenv("MONGO_URI")
+
 
 try:
     client: MongoClient = MongoClient(mongo_uri)  # 5 sec timeout
@@ -108,6 +107,12 @@ def get_news_data_n(name, from_date=None, to_date=None, sort_by="popularity", la
         # Do not want to be writing data to the database during testing
         if os.getenv("TEST_MODE", "false").lower() != "true":
             write_to_database(response.json(), "news_api_org")
+            from_date_dmY = datetime.strptime(
+                params['from'], "%Y-%m-%d").strftime("%d-%m-%Y")
+            to_date_dmY = datetime.strptime(
+                params['to'], "%Y-%m-%d").strftime("%d-%m-%Y")
+            add_new_index(name, from_date_dmY, to_date_dmY)
+
         else:
             print("TESTING IN PROGRESS: TEST_MODE is True, not writing to database")
         return formatted_data
@@ -211,12 +216,21 @@ def add_new_index(name, from_date, to_date):
         {"name": name}, {"_id": 0, "intervals": 1})
 
     query = {}
-
+    update = {}  # NEW
     if result:
-        query["item"] = "name"
-        query["$set"] = {"time_intervals": [[from_date, to_date]]}
+        intervals = result.get("intervals", [])
+        add_interval(intervals, from_date, to_date)
 
-        interval_collection.update_one(query)
+        # 3 LINES BELOW ARE OLD
+        # query["item"] = "name"
+        # query["$set"] = {"time_intervals": intervals}
+        # interval_collection.update_one(query)
+
+        # 3 LINES BELOW ARE NEW
+        query["name"] = name
+        update["$set"] = {"time_intervals": intervals}
+        interval_collection.update_one(query, update)
+
     else:
         query = {
             "name": name,
