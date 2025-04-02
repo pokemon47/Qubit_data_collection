@@ -41,13 +41,10 @@ class testApiFetchCalls(unittest.TestCase):
         
         dates_list = []
 
-        for article in result["articles"]:
-            dates_list.append(article["publishedAt"])
+        for article in result["events"]:
+            dates_list.append(article["time_object"]["timestamp"])
 
         dates_list.sort()
-
-        for date in dates_list:
-            date = datetime.fromisoformat(date)
 
         self.assertGreaterEqual(dates_list[0], from_date)
         self.assertLessEqual(dates_list[-1], to_date)
