@@ -4,7 +4,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), '../src')))
-from functions import get_news_data_av, get_top_gainers_losers_av, get_news_data_n, formattingADAGE, tickers_fetch
+from functions import get_news_data_av, get_top_gainers_losers_av, get_news_data_n, formattingADAGE
 
 
 class testApiFetchCalls(unittest.TestCase):
@@ -29,6 +29,24 @@ class testApiFetchCalls(unittest.TestCase):
         result = get_news_data_n("facebook")
         self.assertIsInstance(result, dict)
         self.assertIn("events", result)
+
+    def test_get_news_data_n_set_dates(self):
+        from_date = datetime.fromisoformat("2025-03-04T14:30:00Z")
+        to_date = datetime.fromisoformat("2025-03-10T14:30:00Z")
+        result = get_news_data_n("facebook", from_date, to_date)
+        self.assertIsInstance(result, dict)
+        self.assertIn("events", result)
+        
+        # Test that the collected articles are within the correct date range
+        dates_list = []
+
+        for article in result["events"]:
+            dates_list.append(article["time_object"]["timestamp"])
+
+        dates_list.sort()
+
+        self.assertGreaterEqual(dates_list[0], from_date)
+        self.assertLessEqual(dates_list[-1], to_date)
 
     def test_formattingADAGE(self):
         sample_data = {
@@ -71,12 +89,6 @@ class testApiFetchCalls(unittest.TestCase):
                          ["title"], "Musk and Trump’s Fort Knox Trip Is About Bitcoin")
         self.assertEqual(formatted_result["events"][1]["attribute"]["title"],
                          "Five predictions for where crypto is headed in 2025")
-
-    # The following API fetch call is too slow to be tested in the CI/CD pipeline
-    """ def test_tickers_fetch(self):
-        result = tickers_fetch("apple")
-        self.assertIsInstance(result, dict)
-        self.assertIn("AAPL", result["stock_symbol"]) """
 
 
 if __name__ == "__main__":

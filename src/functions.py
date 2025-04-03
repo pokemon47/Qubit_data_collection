@@ -120,19 +120,6 @@ def get_news_data_n(name, from_date=None, to_date=None, sort_by="popularity", la
         return f"Error: {response.status_code}, {response.text}"
 
 
-# Function to map company names to tickers
-
-
-def tickers_fetch(name):
-    url = f'https://stock-symbol-lookup-api.onrender.com/{name}'
-
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return f"Error: {response.status_code}, {response.text}"
-
-
 # Function which converts data from the APIs into the format which is stored
 # in the database, and in the events[] list of the ADAGE 3.0 format
 
@@ -156,7 +143,6 @@ def create_article_list(data):
             "attribute": {
                 "publisher": articles.get("source", {}).get("name", "unknown"),
                 "title": articles.get("title", "unknown"),
-                # "tickers": (to be implemented later)
                 "author": articles.get("author", "unknown"),
                 "description": articles.get("description", "unknown"),
                 "url": articles.get("url", "none")

@@ -52,6 +52,12 @@ class testQubitApis(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("events", response.get_json())
 
+    def test_newsapi_with_dates(self):
+        # testing the correct flow with start and end dates
+        response = self.app.get("/newsapi?name=Facebook&from_date=2025-03-04&to_date=2025-03-10")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("events", response.get_json())
+
     def test_newsapi_missing_name(self):
         # no name paramater given --> return error code 400 + errr msg
         response = self.app.get(
