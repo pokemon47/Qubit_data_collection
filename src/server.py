@@ -13,10 +13,14 @@ PORT = int(os.getenv("FLASK_RUN_PORT", 5000))  # Default to 5000 if not set
 app = Flask(__name__)
 
 
-@app.route("/status")
+@app.route('/')
 def home():
-    return jsonify({"status": "Server is running", "port": PORT}), 200
+    return jsonify({"message": "Welcome to the Data Collection API!"}), 200
 
+
+@app.route("/status")
+def get_status():
+    return jsonify({"status": "Server is running", "port": PORT}), 200
 # Route to get news sentiment data from Alpha Vantage
 
 
