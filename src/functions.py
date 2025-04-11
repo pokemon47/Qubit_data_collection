@@ -197,9 +197,11 @@ def write_to_database(data, source_name):
 
 
 def add_new_index(name, from_date, to_date):
+    name_lower = name.strip().lower()
+
     interval_collection = db["company_index"]
     result = interval_collection.find_one(
-        {"name": name}, {"_id": 0, "intervals": 1})
+        {"name": name_lower}, {"_id": 0, "intervals": 1})
 
     query = {}
     update = {}  # NEW
@@ -213,13 +215,13 @@ def add_new_index(name, from_date, to_date):
         # interval_collection.update_one(query)
 
         # 3 LINES BELOW ARE NEW
-        query["name"] = name
+        query["name"] = name_lower
         update["$set"] = {"time_intervals": intervals}
         interval_collection.update_one(query, update)
 
     else:
         query = {
-            "name": name,
+            "name": name_lower,
             "time_intervals": [[from_date, to_date]],
             "hits": 0,
             "misses": 0
