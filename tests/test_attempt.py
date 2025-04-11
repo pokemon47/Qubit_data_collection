@@ -31,8 +31,8 @@ class testApiFetchCalls(unittest.TestCase):
         self.assertIn("events", result)
 
     def test_get_news_data_n_set_dates(self):
-        from_date = datetime.fromisoformat("2025-03-04T14:30:00Z")
-        to_date = datetime.fromisoformat("2025-03-10T14:30:00Z")
+        from_date = datetime.fromisoformat("2025-04-04T14:30:00Z")
+        to_date = datetime.fromisoformat("2025-04-10T14:30:00Z")
         result = get_news_data_n("facebook", from_date, to_date)
         self.assertIsInstance(result, dict)
         self.assertIn("events", result)
