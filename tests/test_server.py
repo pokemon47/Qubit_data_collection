@@ -54,14 +54,14 @@ class testQubitApis(unittest.TestCase):
 
     def test_newsapi_with_dates(self):
         # testing the correct flow with start and end dates
-        response = self.app.get("/newsapi?name=Facebook&from_date=2025-03-04&to_date=2025-03-10")
+        response = self.app.get("/newsapi?name=Facebook&from_date=2025-04-04&to_date=2025-04-10")
         self.assertEqual(response.status_code, 200)
         self.assertIn("events", response.get_json())
 
     def test_newsapi_missing_name(self):
         # no name paramater given --> return error code 400 + errr msg
         response = self.app.get(
-            "/newsapi?from_date=2025-03-04&to_date=2025-03-10")
+            "/newsapi?from_date=2025-04-04&to_date=2025-04-10")
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {
                          "error": "Invalid 'name' given"})
@@ -69,14 +69,14 @@ class testQubitApis(unittest.TestCase):
     def test_newsapi_invalid_name(self):
         # name has AND operation --> invalid name --> return code 400 + err msg
         response = self.app.get(
-            "/newsapi?name=Facebook+AND+Apple&from_date=2025-03-04&to_date=2025-03-10")
+            "/newsapi?name=Facebook+AND+Apple&from_date=2025-04-04&to_date=2025-04-10")
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {
                          "error": "Invalid 'name' given"})
 
     def test_newsapi_missing_dates(self):
         # only one date provided -> 400 + err msg
-        response = self.app.get("/newsapi?name=Apple&from_date=2025-03-04")
+        response = self.app.get("/newsapi?name=Apple&from_date=2025-04-04")
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {
                          "error": "Please provide both to and from dates or none"})
@@ -84,7 +84,7 @@ class testQubitApis(unittest.TestCase):
     def test_newsapi_invalid_date_format(self):
         # incorrect date format -> 400 + err msg
         response = self.app.get(
-            "/newsapi?name=Facebook&from_date=03-04-2025&to_date=2025/03/10")
+            "/newsapi?name=Facebook&from_date=04-04-2025&to_date=2025/04/10")
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {
                          "error": "Date values must be of ISO 8601 format (e.g. 2025-03-04 or 2025-03-04T07:11:59)"})
