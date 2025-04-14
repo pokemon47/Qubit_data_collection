@@ -6,7 +6,10 @@ from datetime import datetime, timedelta
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import copy
+import re
 from time_interval import add_interval
+
+user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
 
 
 # Load environment variables
@@ -237,33 +240,39 @@ def company_to_ticker(name: str):
         'q': name
     }
 
-    response = requests.get(base_url, params=params)
+    response = requests.get(base_url, params=params, headers={'User-Agent': user_agent})
 
     if response.status_code == 200:
         data = response.json()
         ticker = data['quotes'][0]['symbol']
-        return ticker
+        return {
+            "ticker": ticker
+        }
     else:
         return f"Error: {response.status_code}, {response.text}"
 
 
-def ticker_to_company(ticker: str, full_name: bool):
+def ticker_to_company(ticker: str):
     base_url = "https://query2.finance.yahoo.com/v1/finance/search"
 
     params = {
         'q': ticker
     }
 
-    response = requests.get(base_url, params=params)
+    response = requests.get(base_url, params=params, headers={'User-Agent': user_agent})
 
     if response.status_code == 200:
         data = response.json()
-        name = data['quotes'][0]['longname']
+        full_name = data['quotes'][0]['longname']
 
-        if not full_name:
-            name = name.lower().split()[0]
+        name_split = re.split(r"\W+", full_name.lower())
+        name = name_split[0]
 
-        return name
+        return {
+            "short_name": name,
+            "full_name": full_name
+        }
+
     else:
         return f"Error: {response.status_code}, {response.text}"
 

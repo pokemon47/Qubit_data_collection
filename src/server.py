@@ -81,19 +81,11 @@ def convert_company_to_ticker():
 @app.route('/convert/ticker_to_company')
 def convert_ticker_to_company():
     ticker = request.args.get('ticker')
-    full_name = request.args.get('fullname')
 
     if not ticker:
-        return jsonify({"error": "Invalid 'name' given"}), 400
+        return jsonify({"error": "Invalid 'ticker' given"}), 400
 
-    if not full_name:
-        full_name = False
-    elif full_name.strip().lower() == 'true':
-        full_name = True
-    else:
-        full_name = False
-
-    data = ticker_to_company(ticker=ticker, full_name=full_name)
+    data = ticker_to_company(ticker=ticker)
     return jsonify(data)
 
 
