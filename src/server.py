@@ -73,7 +73,7 @@ def convert_company_to_ticker():
 
     if not name or not re.match(r'^[a-zA-Z\s]+$', name):
         return jsonify({"error": "Invalid 'name' given"}), 400
-    
+
     data = company_to_ticker(name=name)
     return jsonify(data)
 
@@ -85,14 +85,14 @@ def convert_ticker_to_company():
 
     if not ticker:
         return jsonify({"error": "Invalid 'name' given"}), 400
-    
+
     if not full_name:
         full_name = False
     elif full_name.strip().lower() == 'true':
         full_name = True
     else:
         full_name = False
-    
+
     data = ticker_to_company(ticker=ticker, full_name=full_name)
     return jsonify(data)
 
