@@ -4,7 +4,7 @@ from datetime import datetime
 from flask import Flask, request, jsonify
 import re
 import os
-from functions import get_news_data_av, get_top_gainers_losers_av, get_news_data_n
+from functions import get_news_data_av, get_top_gainers_losers_av, get_news_data_n, company_to_ticker, ticker_to_company
 
 # Initialize Flask app
 SERVER_ADDRESS = os.getenv("FLASK_RUN_HOST", "127.0.0.1")
@@ -64,6 +64,36 @@ def newsapi():
         except ValueError:
             return jsonify({"error": "Date values must be of ISO 8601 format (e.g. 2025-03-04 or 2025-03-04T07:11:59)"}), 400
     data = get_news_data_n(name=name, from_date=from_date, to_date=to_date)
+    return jsonify(data)
+
+
+@app.route('/convert/company_to_ticker')
+def convert_company_to_ticker():
+    name = request.args.get('name')
+
+    if not name or not re.match(r'^[a-zA-Z\s]+$', name):
+        return jsonify({"error": "Invalid 'name' given"}), 400
+    
+    data = company_to_ticker(name=name)
+    return jsonify(data)
+
+
+@app.route('/convert/ticker_to_company')
+def convert_ticker_to_company():
+    ticker = request.args.get('ticker')
+    full_name = request.args.get('fullname')
+
+    if not ticker:
+        return jsonify({"error": "Invalid 'name' given"}), 400
+    
+    if not full_name:
+        full_name = False
+    elif full_name.strip().lower() == 'true':
+        full_name = True
+    else:
+        full_name = False
+    
+    data = ticker_to_company(ticker=ticker, full_name=full_name)
     return jsonify(data)
 
 

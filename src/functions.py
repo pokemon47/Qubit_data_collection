@@ -230,7 +230,45 @@ def add_new_index(name, from_date, to_date):
         interval_collection.insert_one(query)
 
 
-# Make a job scheduler fucntion,
+def company_to_ticker(name: str):
+    base_url = "https://query2.finance.yahoo.com/v1/finance/search"
+
+    params = {
+        'q': name
+    }
+
+    response = requests.get(base_url, params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+        ticker = data['quotes'][0]['symbol']
+        return ticker
+    else:
+        return f"Error: {response.status_code}, {response.text}"
+
+
+def ticker_to_company(ticker: str, full_name: bool):
+    base_url = "https://query2.finance.yahoo.com/v1/finance/search"
+
+    params = {
+        'q': ticker
+    }
+
+    response = requests.get(base_url, params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+        name = data['quotes'][0]['longname']
+
+        if not full_name:
+            name = name.lower().split()[0]
+
+        return name
+    else:
+        return f"Error: {response.status_code}, {response.text}"
+
+
+# Make a job scheduler function,
 # a job that is to be executed on a seperate thread once a day.
 # The job is to make N number of consecutive requests with every K minutes.
 # - not certainly required, could change based on learning more about AWS lambda
