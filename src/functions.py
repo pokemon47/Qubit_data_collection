@@ -240,7 +240,8 @@ def company_to_ticker(name: str):
         'q': name
     }
 
-    response = requests.get(base_url, params=params, headers={'User-Agent': user_agent})
+    response = requests.get(base_url, params=params, headers={
+                            'User-Agent': user_agent})
 
     if response.status_code == 200:
         data = response.json()
@@ -259,7 +260,8 @@ def ticker_to_company(ticker: str):
         'q': ticker
     }
 
-    response = requests.get(base_url, params=params, headers={'User-Agent': user_agent})
+    response = requests.get(base_url, params=params, headers={
+                            'User-Agent': user_agent})
 
     if response.status_code == 200:
         data = response.json()
