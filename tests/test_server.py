@@ -88,6 +88,57 @@ class testQubitApis(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.get_json(), {
                          "error": "Date values must be of ISO 8601 format (e.g. 2025-03-04 or 2025-03-04T07:11:59)"})
+        
+    def test_company_to_ticker(self):
+        # testing the correct flow
+        test_cases = [
+            ["apple", "AAPL"],
+            ["google", "GOOG"],
+            ["microsoft", "MSFT"],
+            ["facebook", "META"],
+            ["adobe", "ADBE"],
+            ["amazon", "AMZN"],
+            ["tesla", "TSLA"],
+            ["atlassian", "TEAM"]
+        ]
+
+        for case in test_cases:
+            response = self.app.get(f"/convert/company_to_ticker?name={case[0]}")
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.get_json(), {
+                            "ticker": case[1]})
+
+    def test_company_to_ticker_no_name(self):
+        # no name provided -> 400 + error msg
+        response = self.app.get("/convert/company_to_ticker")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {
+                         "error": "Invalid 'name' given"})
+
+    def test_ticker_to_company(self):
+        # testing the correct flow
+        test_cases = [
+            ["AAPL", "apple", "Apple Inc."],
+            ["MSFT", "microsoft", "Microsoft Corporation"],
+            ["ADBE", "adobe", "Adobe Inc."],
+            ["AMZN", "amazon", "Amazon.com, Inc."],
+            ["TSLA", "tesla", "Tesla, Inc."],
+            ["TEAM", "atlassian", "Atlassian Corporation"]
+        ]
+
+        for case in test_cases:
+            response = self.app.get(f"/convert/ticker_to_company?ticker={case[0]}")
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.get_json(), {
+                            "short_name": case[1],
+                            "full_name": case[2]})
+
+    def test_ticker_to_company_no_ticker(self):
+        # no ticker provided -> 400 + error msg
+        response = self.app.get("/convert/ticker_to_company")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(), {
+                         "error": "Invalid 'ticker' given"})
 
 
 if __name__ == "__main__":
