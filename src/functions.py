@@ -15,7 +15,8 @@ user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 # Load environment variables
 load_dotenv()
 alpha_vantage_key = os.getenv("ALPHA_API_KEY")
-news_api_key = os.getenv("NEWS_API_KEY")
+# news_api_key = os.getenv("NEWS_API_KEY")
+news_api_key = "a36c6ebe910e456ebbea78f1ae63bba3"
 mongo_uri = os.getenv("MONGO_URI")
 
 
